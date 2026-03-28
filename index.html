@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to publish your website on GitHub Pages</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff; --bg2: #f5f4f0; --bg3: #eeede8;
+  --text: #1a1a18; --muted: #5f5e5a; --dim: #888780;
+  --border: rgba(0,0,0,0.10);
+  --green: #1D9E75; --green-light: #E1F5EE; --green-dark: #0F6E56;
+  --blue: #185FA5; --blue-light: #E6F1FB;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+body { font-family: var(--font); background: var(--bg3); color: var(--text); min-height: 100vh; }
+
+/* HERO */
+.hero { background: #0D2137; padding: 52px 32px 44px; text-align: center; }
+.hero-tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 10px; background: rgba(255,255,255,0.1); color: #7EC8D4; border: 0.5px solid rgba(255,255,255,0.15); margin-bottom: 16px; letter-spacing: .04em; }
+.hero h1 { font-size: clamp(24px, 4vw, 38px); font-weight: 500; color: #ffffff; margin-bottom: 10px; line-height: 1.2; }
+.hero p { font-size: 14px; color: #8DCDD8; max-width: 520px; margin: 0 auto; line-height: 1.7; }
+
+/* MAIN */
+.main { max-width: 760px; margin: 0 auto; padding: 36px 24px 60px; }
+
+/* SECTION LABEL */
+.section-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .09em; color: var(--dim); margin-bottom: 14px; padding-bottom: 7px; border-bottom: 0.5px solid var(--border); margin-top: 40px; }
+.section-lbl:first-of-type { margin-top: 0; }
+
+/* STEP CARDS */
+.step-card {
+  background: var(--bg); border: 0.5px solid var(--border);
+  border-radius: 12px; margin-bottom: 10px; overflow: hidden;
+}
+.step-hdr {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 18px;
+}
+.step-circle {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--green); color: #fff;
+  font-size: 13px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.step-hdr-text h3 { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+.step-hdr-text p  { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+.step-body { padding: 0 18px 16px 64px; }
+
+/* Screenshot placeholder */
+.screenshot {
+  background: var(--bg2); border: 0.5px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 10px;
+  font-size: 11.5px; color: var(--muted); line-height: 1.6;
+}
+.screenshot strong { color: var(--text); font-weight: 500; }
+
+/* UI mockups inside steps */
+.ui-mock {
+  background: #f8f8f7; border: 0.5px solid var(--border);
+  border-radius: 8px; overflow: hidden; margin-bottom: 10px;
+}
+.ui-mock-bar {
+  background: #1a1a18; padding: 7px 12px; display: flex;
+  align-items: center; gap: 6px;
+}
+.ui-mock-dot { width: 8px; height: 8px; border-radius: 50%; }
+.ui-mock-url { background: rgba(255,255,255,0.1); border-radius: 4px; padding: 2px 10px; font-size: 10px; color: rgba(255,255,255,0.6); margin-left: 8px; flex: 1; }
+.ui-mock-body { padding: 14px 16px; font-size: 11.5px; }
+
+/* Highlight boxes */
+.tip-box {
+  background: var(--green-light); border-left: 3px solid var(--green);
+  border-radius: 0 7px 7px 0; padding: 9px 12px; margin-bottom: 10px;
+  font-size: 11.5px; color: var(--green-dark); line-height: 1.6;
+}
+.tip-box strong { font-weight: 600; }
+.warn-box {
+  background: #FAEEDA; border-left: 3px solid #BA7517;
+  border-radius: 0 7px 7px 0; padding: 9px 12px; margin-bottom: 10px;
+  font-size: 11.5px; color: #633806; line-height: 1.6;
+}
+.code-box {
+  background: #1a1a18; border-radius: 7px; padding: 11px 14px;
+  font-family: 'Courier New', monospace; font-size: 12px;
+  color: #7EC8D4; margin-bottom: 10px; line-height: 1.7;
+  white-space: pre-wrap; word-break: break-all;
+}
+.code-box .comment { color: #5f5e5a; }
+.code-box .tag     { color: #EF9F27; }
+.code-box .attr    { color: #8DCDD8; }
+.code-box .val     { color: #97C459; }
+.code-box .text    { color: #e8e6de; }
+
+/* Click path indicator */
+.click-path {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.cp-item {
+  background: var(--bg2); border: 0.5px solid var(--border);
+  border-radius: 6px; padding: 4px 10px;
+  font-size: 11.5px; font-weight: 500; color: var(--text);
+}
+.cp-arrow { font-size: 11px; color: var(--dim); }
+
+/* Numbered list */
+.num-list { display: flex; flex-direction: column; gap: 7px; }
+.num-row { display: flex; gap: 10px; font-size: 12px; }
+.num-badge {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--bg2); border: 0.5px solid var(--border);
+  font-size: 10px; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.num-row-text { color: var(--muted); line-height: 1.6; }
+.num-row-text strong { color: var(--text); font-weight: 500; }
+
+/* HTML title explanation */
+.html-demo {
+  background: var(--bg); border: 0.5px solid var(--border);
+  border-radius: 10px; overflow: hidden; margin-bottom: 10px;
+}
+.html-demo-top {
+  background: #0D2137; padding: 8px 14px; display: flex;
+  align-items: center; justify-content: space-between;
+}
+.html-demo-title { font-size: 11px; color: #7EC8D4; }
+.html-demo-tab {
+  background: rgba(255,255,255,0.12); border-radius: 4px;
+  padding: 2px 10px; font-size: 10.5px; color: #fff;
+}
+.html-demo-body { padding: 14px 16px; }
+.html-demo-arrow {
+  display: flex; align-items: center; gap: 10px; margin: 8px 0;
+  font-size: 12px;
+}
+.arrow-line { flex: 1; height: 0.5px; background: var(--border); }
+
+/* Final URL box */
+.url-box {
+  background: #0D2137; border-radius: 10px; padding: 18px 20px;
+  text-align: center; margin-top: 32px;
+}
+.url-box p { font-size: 12px; color: #8DCDD8; margin-bottom: 8px; }
+.url-box .url { font-size: 18px; font-weight: 500; color: #7EC8D4; font-family: 'Courier New', monospace; }
+
+footer { text-align: center; padding: 18px; font-size: 10px; color: var(--dim); border-top: 0.5px solid var(--border); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-tag">GitHub Pages · Free website hosting</span>
+  <h1>How to publish your website<br>on GitHub Pages</h1>
+  <p>Step-by-step guide to uploading your HTML files and making them live on the internet — for free, in under 5 minutes.</p>
+</div>
+
+<div class="main">
+
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-lbl">Part 1 — Create your GitHub account & repository</div>
+
+  <div class="step-card">
+    <div class="step-hdr">
+      <div class="step-circle">1</div>
+      <div class="step-hdr-text">
+        <h3>Go to GitHub and create a free account</h3>
+        <p>Open your browser and go to <strong>github.com</strong> — click Sign up and create a free account. Your username will become part of your website address, so choose it carefully.</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="tip-box"><strong>Your website address will be:</strong> https://<em>your-username</em>.github.io/<em>your-repo-name</em>/</div>
+      <div class="ui-mock">
+        <div class="ui-mock-bar">
+          <div class="ui-mock-dot" style="background:#FF5F57"></div>
+          <div class="ui-mock-dot" style="background:#FFBD2E"></div>
+          <div class="ui-mock-dot" style="background:#28C840"></div>
+          <div class="ui-mock-url">github.com</div>
+        </div>
+        <div class="ui-mock-body">
+          <strong>github.com</strong> → click <strong>Sign up</strong> in the top right corner → enter your email, password, and username → verify your account
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-hdr">
+      <div class="step-circle">2</div>
+      <div class="step-hdr-text">
+        <h3>Create a new repository</h3>
+        <p>A repository is like a folder on GitHub that holds all your files. This is where you will upload your HTML files.</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="click-path">
+        <div class="cp-item">+ button (top right)</div>
+        <div class="cp-arrow">→</div>
+        <div class="cp-item">New repository</div>
+      </div>
+      <div class="screenshot">
+        <strong>Repository name:</strong> type a short name, e.g. <strong>kanaleneiland</strong> — no spaces, use dashes<br><br>
+        <strong>Description:</strong> optional, e.g. "WHO Healthy Cities Analysis"<br><br>
+        <strong>Visibility:</strong> choose <strong>Public</strong> (required for free GitHub Pages)<br><br>
+        <strong>Leave everything else as default</strong> — do not tick "Add a README file" yet<br><br>
+        Then click the green <strong>Create repository</strong> button
+      </div>
+      <div class="tip-box"><strong>Important:</strong> The repository must be <strong>Public</strong> — Private repositories cannot use the free GitHub Pages hosting.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-lbl">Part 2 — Upload your HTML files</div>
+
+  <div class="step-card">
+    <div class="step-hdr">
+      <div class="step-circle">3</div>
+      <div class="step-hdr-text">
+        <h3>Upload your files to the repository</h3>
+        <p>After creating the repository you will see an empty page. Now you need to upload all your HTML files.</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="click-path">
+        <div class="cp-item">uploading an existing file</div>
+        <span style="font-size:11px;color:var(--muted)">— click the link on the empty repo page</span>
+      </div>
+      <div class="screenshot">
+        <strong>Step 1:</strong> On the empty repository page, click the link that says <strong>"uploading an existing file"</strong><br><br>
+        <strong>Step 2:</strong> Drag and drop ALL your .html files at once into the upload area — or click "choose your files" to browse<br><br>
+        <strong>Step 3:</strong> Wait for all files to finish uploading (you will see a green tick next to each one)<br><br>
+        <strong>Step 4:</strong> Scroll down to the <strong>Commit changes</strong> section — leave the message as "Add files via upload"<br><br>
+        <strong>Step 5:</strong> Click the green <strong>Commit changes</strong> button
+      </div>
+      <div class="tip-box"><strong>Upload all files at the same time</strong> — index.html, bubble_map.html, 6p_criteria.html, cascade_map.html, intervention_sequence.html, full_intervention.html, location_simulator.html, sources.html</div>
+      <div class="warn-box"><strong>The file named index.html is your homepage.</strong> When someone visits your website address, GitHub automatically opens index.html first. Do not rename it.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-lbl">Part 3 — Turn on GitHub Pages</div>
+
+  <div class="step-card">
+    <div class="step-hdr">
+      <div class="step-circle">4</div>
+      <div class="step-hdr-text">
+        <h3>Go to Settings</h3>
+        <p>Now you need to tell GitHub to turn your files into a live website. This is done in the repository Settings.</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="click-path">
+        <div class="cp-item">Your repository</div>
+        <div class="cp-arrow">→</div>
+        <div class="cp-item">Settings tab</div>
+        <div class="cp-arrow">→</div>
+        <div class="cp-item">Pages (left sidebar)</div>
+      </div>
+      <div class="screenshot">
+        At the top of your repository page you will see tabs: <strong>Code · Issues · Pull requests · Actions · Projects · Security · <u>Settings</u></strong><br><br>
+        Click <strong>Settings</strong> → then in the left sidebar scroll down and click <strong>Pages</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-hdr">
+      <div class="step-circle">5</div>
+      <div class="step-hdr-text">
+        <h3>Set the source to "main" branch</h3>
+        <p>This tells GitHub which branch (version of your files) to use for the website. You need to set it to <strong>main</strong>.</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="screenshot">
+        Under <strong>Build and deployment</strong> you will see:<br><br>
+        <strong>Source:</strong> make sure it says <strong>Deploy from a branch</strong><br><br>
+        <strong>Branch:</strong> click the dropdown that says "None" → select <strong>main</strong> → leave the folder as <strong>/ (root)</strong><br><br>
+        Click the <strong>Save</strong> button
+      </div>
+      <div class="ui-mock">
+        <div class="ui-mock-bar">
+          <div class="ui-mock-dot" style="background:#FF5F57"></div>
+          <div class="ui-mock-dot" style="background:#FFBD2E"></div>
+          <div class="ui-mock-dot" style="background:#28C840"></div>
+          <div class="ui-mock-url">github.com / your-username / kanaleneiland / settings / pages</div>
+        </div>
+        <div class="ui-mock-body">
+          <div style="margin-bottom:10px;">
+            <div style="font-size:11px;font-weight:600;margin-bottom:5px;">Build and deployment</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:5px;">Source</div>
+            <div style="display:inline-block;background:#f0f0f0;border:0.5px solid #ddd;border-radius:5px;padding:4px 10px;font-size:11px;">Deploy from a branch ▾</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:5px;">Branch</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <div style="background:#1D9E75;color:#fff;border-radius:5px;padding:4px 12px;font-size:11px;font-weight:500;">main ▾</div>
+              <div style="background:#f0f0f0;border:0.5px solid #ddd;border-radius:5px;padding:4px 10px;font-size:11px;">/ (root) ▾</div>
+              <div style="background:#1D9E75;color:#fff;border-radius:5px;padding:4px 12px;font-size:11px;font-weight:500;cursor:pointer;">Save</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tip-box"><strong>After clicking Save:</strong> GitHub will start building your website. This takes about 60 seconds. Refresh the Settings → Pages page and you will see a green box with your live website address.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-lbl">Part 4 — Visit your live website</div>
+
+  <div class="step-card">
+    <div class="step-hdr">
+      <div class="step-circle">6</div>
+      <div class="step-hdr-text">
+        <h3>Your website is live</h3>
+        <p>After about 60 seconds, GitHub Pages will publish your site. Refresh the Settings → Pages page and you will see a green box at the top.</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="screenshot">
+        The green box will say:<br><br>
+        <strong>✓ Your site is live at</strong> https://your-username.github.io/kanaleneiland/<br><br>
+        Click that link — your website is now live on the internet and you can share it with anyone.
+      </div>
+      <div class="url-box">
+        <p>Your website will be at:</p>
+        <div class="url">https://your-username.github.io/kanaleneiland/</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-lbl">Part 5 — How HTML files become page titles</div>
+
+  <div class="step-card">
+    <div class="step-hdr">
+      <div class="step-circle">7</div>
+      <div class="step-hdr-text">
+        <h3>How the &lt;title&gt; tag sets the browser tab name</h3>
+        <p>Every HTML file has a title tag in the &lt;head&gt; section. This is what appears in the browser tab, in Google search results, and when someone bookmarks the page.</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="code-box"><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="val">"en"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="val">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span><span class="text">Kanaleneiland — Healthy Cities Analysis</span><span class="tag">&lt;/title&gt;</span>  <span class="comment">← this is the browser tab name</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="comment">... your page content goes here ...</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></div>
+
+      <div class="html-demo">
+        <div class="html-demo-top">
+          <div class="html-demo-title">Browser tab shows the &lt;title&gt; tag content</div>
+          <div class="html-demo-tab">Kanaleneiland — Healthy Cities Analysis ×</div>
+        </div>
+        <div class="html-demo-body">
+          <div class="html-demo-arrow">
+            <div style="font-size:11px;color:var(--muted);">What you write in &lt;title&gt;&lt;/title&gt;</div>
+            <div class="arrow-line"></div>
+            <div style="font-size:11px;color:var(--muted);">appears in the browser tab above</div>
+          </div>
+          <div style="font-size:11.5px;color:var(--muted);line-height:1.6;">
+            Each of your HTML files has its own title tag — that is why each page has a different tab name when you navigate between them.
+          </div>
+        </div>
+      </div>
+
+      <div class="num-list">
+        <div class="num-row">
+          <div class="num-badge">1</div>
+          <div class="num-row-text"><strong>index.html</strong> → title: "Kanaleneiland — Healthy Cities Analysis" → this is your homepage</div>
+        </div>
+        <div class="num-row">
+          <div class="num-badge">2</div>
+          <div class="num-row-text"><strong>bubble_map.html</strong> → title: "Kanaleneiland — WHO Healthy City Relationship Map"</div>
+        </div>
+        <div class="num-row">
+          <div class="num-badge">3</div>
+          <div class="num-row-text"><strong>location_simulator.html</strong> → title: "Kanaleneiland — Location Intervention Simulator"</div>
+        </div>
+        <div class="num-row">
+          <div class="num-badge">4</div>
+          <div class="num-row-text">And so on for every other HTML file — each one has its own &lt;title&gt; already set</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-lbl">Part 6 — How index.html links to all your other pages</div>
+
+  <div class="step-card">
+    <div class="step-hdr">
+      <div class="step-circle">8</div>
+      <div class="step-hdr-text">
+        <h3>Links between pages use the file name</h3>
+        <p>In index.html, each card that opens another page uses a simple &lt;a href&gt; link pointing to the filename. That is how clicking a card on the homepage opens the right page.</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="code-box"><span class="comment">&lt;!-- This is how a card link works in index.html --&gt;</span>
+
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val">"bubble_map.html"</span><span class="tag">&gt;</span>          <span class="comment">← the filename you uploaded</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"card-num"</span><span class="tag">&gt;</span><span class="text">01</span><span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"card-body"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h2&gt;</span><span class="text">Relationship Bubble Map</span><span class="tag">&lt;/h2&gt;</span>   <span class="comment">← card heading shown to user</span>
+    <span class="tag">&lt;p&gt;</span><span class="text">Description text here</span><span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/a&gt;</span>
+
+<span class="comment">&lt;!-- href="bubble_map.html" must exactly match the filename you uploaded --&gt;</span></div>
+
+      <div class="tip-box"><strong>The most important rule:</strong> the text inside <strong>href=" "</strong> must be spelled exactly the same as the filename you uploaded — including lowercase letters and underscores. If your file is called <strong>bubble_map.html</strong> then href must say <strong>"bubble_map.html"</strong> — not "Bubble_Map.html" or "bubblemap.html".</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-lbl">Part 7 — Updating your website after changes</div>
+
+  <div class="step-card">
+    <div class="step-hdr">
+      <div class="step-circle">9</div>
+      <div class="step-hdr-text">
+        <h3>How to update a file after you have made changes</h3>
+        <p>When you update an HTML file and want the website to reflect the change, just upload the new version to GitHub.</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="num-list">
+        <div class="num-row">
+          <div class="num-badge">1</div>
+          <div class="num-row-text">Go to your repository on github.com</div>
+        </div>
+        <div class="num-row">
+          <div class="num-badge">2</div>
+          <div class="num-row-text">Click the file you want to replace (e.g. <strong>full_intervention.html</strong>)</div>
+        </div>
+        <div class="num-row">
+          <div class="num-badge">3</div>
+          <div class="num-row-text">Click the <strong>pencil icon</strong> (Edit) → then at the top right of the editor click the <strong>three dots ···</strong> → <strong>Delete file</strong> — or simply click the <strong>upload</strong> icon to replace it</div>
+        </div>
+        <div class="num-row">
+          <div class="num-badge">4</div>
+          <div class="num-row-text">Alternatively: on the main Code tab, click <strong>Add file → Upload files</strong> → upload your new version → GitHub automatically replaces the old one if the filename is the same</div>
+        </div>
+        <div class="num-row">
+          <div class="num-badge">5</div>
+          <div class="num-row-text">Click <strong>Commit changes</strong> — your website updates in about 30–60 seconds</div>
+        </div>
+      </div>
+      <div class="tip-box"><strong>Quick tip:</strong> After committing, wait 30 seconds then do a hard refresh in your browser (Ctrl+Shift+R on Windows, Cmd+Shift+R on Mac) to see the updated version — your browser may have cached the old page.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-lbl">Quick summary — the whole process in 9 steps</div>
+
+  <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:12px;padding:18px 20px;">
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge" style="background:#1D9E75;color:#fff;border:none;">1</div><div class="num-row-text"><strong>Go to github.com</strong> → create a free account</div></div>
+      <div class="num-row"><div class="num-badge" style="background:#1D9E75;color:#fff;border:none;">2</div><div class="num-row-text"><strong>Click + → New repository</strong> → name it, set to Public → Create</div></div>
+      <div class="num-row"><div class="num-badge" style="background:#1D9E75;color:#fff;border:none;">3</div><div class="num-row-text"><strong>Click "uploading an existing file"</strong> → drag all your .html files in → Commit changes</div></div>
+      <div class="num-row"><div class="num-badge" style="background:#1D9E75;color:#fff;border:none;">4</div><div class="num-row-text"><strong>Click Settings tab → Pages (left sidebar)</strong></div></div>
+      <div class="num-row"><div class="num-badge" style="background:#1D9E75;color:#fff;border:none;">5</div><div class="num-row-text"><strong>Branch dropdown → select main → folder / (root) → Save</strong></div></div>
+      <div class="num-row"><div class="num-badge" style="background:#1D9E75;color:#fff;border:none;">6</div><div class="num-row-text"><strong>Wait 60 seconds → refresh Settings → Pages</strong> → green box appears with your URL</div></div>
+      <div class="num-row"><div class="num-badge" style="background:#1D9E75;color:#fff;border:none;">7</div><div class="num-row-text"><strong>Click the URL</strong> → your website is live — share it with anyone</div></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>GitHub Pages Guide · Free static website hosting · No coding or server knowledge required</footer>
+</body>
+</html>
